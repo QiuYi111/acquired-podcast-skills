@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StepFun Dialogue Manifest",
+  "description": "A single chunk manifest for StepFun StepAudio 2.5 TTS. Each speaker turn is a separate API call.",
+  "type": "object",
+  "required": ["chunk_id", "backend", "model_id", "api_endpoint", "beat_instruction", "calls"],
+  "properties": {
+    "chunk_id": {
+      "type": "string",
+      "pattern": "^C\\d{2}$",
+      "description": "Matches chunk_id in Director Script"
+    },
+    "backend": {
+      "type": "string",
+      "const": "stepfun",
+      "description": "Must be 'stepfun'"
+    },
+    "model_id": {
+      "type": "string",
+      "enum": ["stepaudio-2.5-tts", "step-tts-2", "step-tts-mini"],
+      "default": "stepaudio-2.5-tts",
+      "description": "StepFun TTS model ID"
+    },
+    "api_endpoint": {
+      "type": "string",
+      "const": "POST https://api.stepfun.com/v1/audio/speech",
+      "description": "API endpoint"
+    },
+    "beat_instruction": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Global context instruction for this beat. Natural language, sets overall tone."
+    },
+    "calls": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ordered list of single-speaker API calls. Total text per call must be ≤1000 chars.",
+      "items": {
+        "type": "object",
+        "required": ["call_id", "voice_id", "text"],
+        "properties": {
+          "call_id": {
+            "type": "string",
+            "description": "Unique call identifier (e.g., C01_T001)"
+          },
+          "voice_id": {
+            "type": "string",
+            "description": "StepFun voice ID (official or cloned)"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 1000,
+            "description": "Text to synthesize. Use （）fullwidth brackets for inline directives."
+          },
+          "speed": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 2.0,
+            "default": 1.0,
+            "description": "Speech speed multiplier"
+          },
+          "volume": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 2.0,
+            "default": 1.0,
+            "description": "Volume multiplier"
+          },
+          "voice_label": {
+            "type": "object",
+            "properties": {
+              "emotion": {
+                "type": "string",
+                "enum": ["高兴", "非常高兴", "悲伤", "生气", "非常生气", "撒娇", "恐惧", "惊讶", "兴奋", "钦佩", "困惑"],
+                "description": "Structured emotion tag"
+              },
+              "style": {
+                "type": "string",
+                "enum": ["慢速", "极慢", "快速", "极快", "冷漠", "尴尬", "沮丧", "温柔", "甜美", "豪爽", "严肃", "傲慢", "老年", "吼叫", "阴阳怪气", "磕巴"],
+                "description": "Delivery style or speed tag"
+              }
+            },
+            "additionalProperties": false
+          },
+          "response_format": {
+            "type": "string",
+            "enum": ["mp3", "wav", "flac", "opus", "pcm"],
+            "default": "mp3"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
