@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Director Script Segment",
+  "description": "A single speaker turn in the Acquired Audio Director Script. One object per JSONL line.",
+  "type": "object",
+  "required": ["segment_id", "chunk_id", "speaker", "beat", "intent", "text", "status"],
+  "properties": {
+    "segment_id": {
+      "type": "string",
+      "pattern": "^S\\d{2}_B\\d{3}_T\\d{3}$",
+      "description": "Globally unique segment identifier: {Season}_{Beat}_{Turn}"
+    },
+    "chunk_id": {
+      "type": "string",
+      "pattern": "^C\\d{2}$",
+      "description": "Chunk group for API call batching (e.g., C01)"
+    },
+    "speaker": {
+      "type": "string",
+      "enum": ["ben_like", "david_like"],
+      "description": "Speaker identity — determines cognitive role, not voice"
+    },
+    "beat": {
+      "type": "string",
+      "enum": [
+        "cold_open",
+        "origin_story",
+        "first_insight",
+        "mechanism_breakdown",
+        "near_death",
+        "inflection_point",
+        "business_model_reveal",
+        "moat_analysis",
+        "counterfactual",
+        "grading",
+        "transition",
+        "tangent",
+        "interjection"
+      ],
+      "description": "Narrative beat type"
+    },
+    "intent": {
+      "type": "string",
+      "description": "What this turn accomplishes in the conversation"
+    },
+    "delivery": {
+      "type": "string",
+      "description": "ElevenLabs v3 audio tags (max 1-2). Empty string if none."
+    },
+    "text": {
+      "type": "string",
+      "minLength": 20,
+      "description": "The spoken text, rewritten for oral delivery"
+    },
+    "pause_after_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2000,
+      "default": 0,
+      "description": "Pause after this turn in milliseconds. Prefer punctuation over explicit pauses."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "approved", "regenerate"],
+      "default": "pending",
+      "description": "Segment status for regeneration workflow"
+    },
+    "regeneration_note": {
+      "type": "string",
+      "description": "Only present when status=regenerate. Direction for re-generation."
+    },
+    "text_hash": {
+      "type": "string",
+      "description": "SHA256 hash of text field for change detection during regeneration"
+    },
+    "audio_path": {
+      "type": "string",
+      "description": "Path to rendered audio file (populated after TTS generation)"
+    }
+  },
+  "additionalProperties": false
+}

@@ -37,6 +37,33 @@ David Rosenthal's persona — the narrative architect and strategic framework an
 - Loves a good framework (Porter's Five Forces, Clayton Christensen, etc.)
 - Manages pacing: knows when to zoom in on a detail vs. pull back to the big picture
 
+### 🎬 `acquired-audio-director/` *(NEW)*
+
+The performance director — transforms finished scripts into TTS-ready director scripts for ElevenLabs v3. This is NOT a podcast writer; it's a **podcast performance director** that:
+
+- Segments the script into **narrative beats** (cold open → origin → mechanism → business model → grading)
+- Adds **speaker intent** and **delivery direction** per turn (not just raw emotion tags)
+- Rewrites written prose into **spoken dialogue** while preserving all facts
+- Outputs **Director Script JSONL** (one turn per line, with segment IDs for regeneration)
+- Compiles into **ElevenLabs Dialogue Manifest JSON** (ready for Text-to-Dialogue API)
+- Runs a **QA checklist** (coverage, dialogue balance, TTS limits, text normalization)
+
+Includes:
+- **JSON schemas** for both director script and ElevenLabs manifest (validate before calling API)
+- **ElevenLabs v3 directing notes** — extracted from official docs: audio tags, punctuation as direction, stability settings, voice selection rules
+- **Podcastfy lessons** — conversation configuration, long-form chunking, style transfer patterns
+- **NeuralNoise lessons** — segment-level regeneration, manual editing workflow, audio stitching
+
+#### Pipeline
+
+```
+acquired-orchestrator → Full script
+                          ↓
+         acquired-audio-director → Director Script JSONL + ElevenLabs Manifest
+                          ↓
+              elevenlabs-renderer → Audio segments (separate skill, TBD)
+```
+
 ## How to Use
 
 These are [Hermes Agent skills](https://hermes-agent.nousresearch.com/docs/skills) — drop them into `~/.hermes/skills/` and they're automatically available.
